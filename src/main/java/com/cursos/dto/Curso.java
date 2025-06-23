@@ -1,4 +1,4 @@
-package com.cursos.model;
+package com.cursos.dto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 public class Curso {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idcurso;

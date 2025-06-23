@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cursos.model.Curso;
+import com.cursos.dto.Curso;
 import com.cursos.services.CursoService;
 
 

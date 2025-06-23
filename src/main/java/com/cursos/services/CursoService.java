@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cursos.model.Curso;
+import com.cursos.dto.Curso;
 //import com.cursos.repository.CursoRepository;
 import com.cursos.repository.repositoryInterfaz;
 
