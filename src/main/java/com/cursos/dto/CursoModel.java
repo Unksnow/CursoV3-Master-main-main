@@ -14,6 +14,6 @@ public class CursoModel extends RepresentationModel<CursoModel> {
     private Integer idcurso;
     private String  nombreCurso;
     private String  profesor;
-    private String Asignatura;
+    private String  Asignaturas;
 
 }
