@@ -1,15 +1,17 @@
 package com.cursos.cursos;
 
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.hateoas.Link;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +21,11 @@ import com.cursos.dto.Curso;
 import com.cursos.dto.CursoModel;
 import com.cursos.services.CursoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CursoController.class)
 public class CursoControllerTest {
@@ -49,11 +56,82 @@ public class CursoControllerTest {
     @Test
     @DisplayName("GET /api/v0/cursos retorna un 404 si no hay cursos")
     public void testListarCursosVacios() throws Exception {
-        when(service.findAll()).thenReturn(List.of());
+        when(service.obtenerCursos()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/v0/cursos/"));
+        mockMvc.perform(get("/api/v0/cursos/"))
+            .andExpect(status().isNotFound());
+    }
+    @Test
+    @DisplayName("GET /api/v0/cursos/{idcurso} retorna 404 si no esiste")
+    public void testBuscarPorIdNoExistente() throws Exception {
+        when(service.buscarCursoPorId(99)).thenReturn(null);
+
+        mockMvc.perform(get("/api/v0/curso/99")).andExpect(status().isNotFound());
+    }
+    @Test
+    @DisplayName("DELETE /api/v0/cursos/{idcurso} elimina el usuario existente")
+    public void testEliminarUsuario() throws Exception {
+        doNothing().when(service).eliminarCurso(6);
+
+        mockMvc.perform(delete("/api/v0/curso/6"))
+            .andExpect(status().isNoContent());
+    }
+    @Test
+    @DisplayName("POST /api/v0/cursos crea un curso")
+    public void testAgregarCurso() throws Exception {
+        Curso nuevo = new Curso(null, "Matematica", "Luis", "Algebra");
+        Curso guardado = new Curso(3, "Matematica", "Luis", "Algebra");
+
+        when(service.guardarCurso(any(Curso.class))).thenReturn(guardado);
+        when(assembler.toModel(any(Curso.class))).thenReturn(new DummyCursoModel(guardado));
+
+        mockMvc.perform(post("/api/v0/usuarios/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(nuevo)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.nombreCurso").value("Matematica"))
+            .andExpect(jsonPath("$.idcurso").value(3));
     }
 
+    @Test
+    @DisplayName("GET /api/v0/cursos/{idcurso} retorna usuario existente")
+    public void testBuscarPorIdExistente() throws Exception {
+        Curso cur = new Curso(4, "Programacion", "Luis", "Java");
+
+        when(service.buscarCursoPorId(4)).thenReturn(cur);
+        when(assembler.toModel(any(Curso.class))).thenReturn(new DummyCursoModel(cur));
+
+        mockMvc.perform(get("/api/v0/curso/4"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nombre").value("Progamacion"));       
+
+    }
+    @Test
+    @DisplayName("PUT /api/v0/cursos/{idcurso} actualiza curso existente")
+    public void testActualizarCurso() throws Exception {
+        Curso actualizado = new Curso(5, "Lenguaje", "Javier", "Lectura");
+
+        when(service.actualizarCurso(any(Curso.class), eq(5))).thenReturn(actualizado);
+        when(assembler.toModel(any(Curso.class))).thenReturn(new DummyCursoModel(actualizado));
+
+
+         mockMvc.perform(put("/api/v0/cursos/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(actualizado)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.nombre").value("Lenguaje"));       
+        
+    }
+    @Test
+    @DisplayName("PUT /api/v0/cursos/{idcurso} retorna un 404 si no se encuentra el curso")
+    public void testActualizarCursoNoEncontrado() throws Exception {
+        when(service.actualizarCurso(any(Curso.class) , eq(88))).thenReturn(null);
+
+        mockMvc.perform(put("/api/v0/cursos/88")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new Curso())))
+            .andExpect(status().isNotFound());       
+    }
 
 
 

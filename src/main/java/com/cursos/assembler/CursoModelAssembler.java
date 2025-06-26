@@ -8,7 +8,6 @@ import com.cursos.dto.Curso;
 import com.cursos.dto.CursoModel;
 
 
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 
