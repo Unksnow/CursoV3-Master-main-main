@@ -12,6 +12,7 @@ import com.cursos.dto.Curso;
 public interface repositoryInterfaz extends JpaRepository<Curso, Integer> {
 
     List<Curso> findByProfesorContainingIgnoreCase(String nombreProfesor);
+    
 
     
     @Query("SELECT c.nombreCurso FROM Curso c")
