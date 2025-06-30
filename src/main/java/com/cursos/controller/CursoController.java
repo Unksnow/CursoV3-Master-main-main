@@ -1,11 +1,16 @@
 package com.cursos.controller;
 
 import java.util.List;
+<<<<<<< HEAD
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+=======
+
+import org.springframework.beans.factory.annotation.Autowired;
+>>>>>>> 35157af14d2e7e82086a12acdc57846cfc714145
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+<<<<<<< HEAD
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,6 +29,14 @@ import com.cursos.dto.Curso;
 import com.cursos.dto.CursoModel;
 import com.cursos.services.CursoService;
 
+=======
+
+import com.cursos.dto.Curso;
+import com.cursos.services.CursoService;
+
+
+
+>>>>>>> 35157af14d2e7e82086a12acdc57846cfc714145
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
@@ -33,6 +47,7 @@ public class CursoController {
     @Autowired
     private CursoService serviceCursos;
 
+<<<<<<< HEAD
     @Autowired
     private CursoModelAssembler assembler;
 
@@ -66,6 +81,21 @@ public class CursoController {
         }
         return ResponseEntity.ok(assembler.toModel(aux));
     }
+=======
+    @GetMapping("")
+        public List<Curso> obteneCursos(){
+            return serviceCursos.obtenerCursos();
+        }
+    @PostMapping()
+        public Curso guardarCurso(@RequestBody Curso cur){
+            return serviceCursos.guardarCurso(cur);
+        }
+     
+    @GetMapping("{idcurso}")
+        public Curso buscarCurso(@PathVariable int idcurso){
+            return serviceCursos.buscarCursoPorId(idcurso);
+        }
+>>>>>>> 35157af14d2e7e82086a12acdc57846cfc714145
     @PutMapping("{idcurso}")
         public ResponseEntity<Curso> actualizarCurso(@PathVariable Integer idcurso, @RequestBody Curso cur){
             Curso aux = serviceCursos.actualizarCurso(cur, idcurso);
@@ -75,6 +105,7 @@ public class CursoController {
             return ResponseEntity.ok(aux);
         }
     @GetMapping("/nombres")
+<<<<<<< HEAD
         public ModelAndView obtenerNombresCursos() {
         List<String> nombres = serviceCursos.obtenerNombresCursos();
 
@@ -87,10 +118,15 @@ public class CursoController {
         ModelAndView mav = new ModelAndView("lista-nombres"); 
         mav.addObject("nombres", nombres);
         return mav;
+=======
+        public List<String> obtenerNombresCursos() {
+            return serviceCursos.obtenerNombresCursos();
+>>>>>>> 35157af14d2e7e82086a12acdc57846cfc714145
         }
         
     @GetMapping("/profesor/{nombreProfesor}")
         public List<Curso> obtenerCursosPorProfesor(@PathVariable String nombreProfesor) {
+<<<<<<< HEAD
         List<Curso> cursos = serviceCursos.obtenerCursosPorProfesor(nombreProfesor);
     
         if (cursos == null || cursos.isEmpty()) {
@@ -99,6 +135,10 @@ public class CursoController {
 
         return cursos;
         }  
+=======
+            return serviceCursos.obtenerCursosPorProfesor(nombreProfesor);
+        }    
+>>>>>>> 35157af14d2e7e82086a12acdc57846cfc714145
     @DeleteMapping("{idcurso}")
         public ResponseEntity<Object> eliminarCurso(@PathVariable Integer idcurso){
             serviceCursos.eliminarCurso(idcurso);
