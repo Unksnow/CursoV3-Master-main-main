@@ -1,19 +1,26 @@
 package com.cursos.cursos;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.cursos.assembler.CursoModelAssembler;
 import com.cursos.controller.CursoController;
@@ -21,11 +28,6 @@ import com.cursos.dto.Curso;
 import com.cursos.dto.CursoModel;
 import com.cursos.services.CursoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CursoController.class)
 public class CursoControllerTest {
@@ -85,12 +87,15 @@ public class CursoControllerTest {
         when(service.guardarCurso(any(Curso.class))).thenReturn(guardado);
         when(assembler.toModel(any(Curso.class))).thenReturn(new DummyCursoModel(guardado));
 
-        mockMvc.perform(post("/api/v0/cursos/")
+        mockMvc.perform(post("/api/v0/cursos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(nuevo)))
+            .andDo(print())    
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.nombreCurso").value("Matematica"))
-            .andExpect(jsonPath("$.idcurso").value(3));
+            .andExpect(jsonPath("$.idcurso").value(3))
+            .andExpect(jsonPath("$.profesor").value("Luis"))
+            .andExpect(jsonPath("$.asignaturas").value("Algebra"));
     }
 
     @Test
@@ -101,11 +106,14 @@ public class CursoControllerTest {
         when(service.buscarCursoPorId(4)).thenReturn(cur);
         when(assembler.toModel(any(Curso.class))).thenReturn(new DummyCursoModel(cur));
 
-        mockMvc.perform(get("/api/v0/cursos/4"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nombreCursos").value("Progamacion"));       
+        mockMvc.perform(get("/api/v0/cursos/{idcurso}", 4))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.idcurso").value(4))
+        .andExpect(jsonPath("$.nombreCurso").value("Programacion"))
+        .andExpect(jsonPath("$.profesor").value("Luis"))
+        .andExpect(jsonPath("$.asignaturas").value("Java"));       
 
-    }
+        }
     @Test
     @DisplayName("PUT /api/v0/cursos/{idcurso} actualiza curso existente")
     public void testActualizarCurso() throws Exception {

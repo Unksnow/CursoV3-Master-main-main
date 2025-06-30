@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS cursos;
 
+
 CREATE TABLE curso (
     idcurso INT AUTO_INCREMENT PRIMARY KEY,
     nombreCurso VARCHAR(255) NOT NULL,
